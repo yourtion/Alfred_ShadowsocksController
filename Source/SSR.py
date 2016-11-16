@@ -1,11 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*- 
 
-URL_SERVER="/servers"
-URL_STATUS="/status"
-URL_TOGGLE="/toggle"
-URL_MODE="/mode"
-
 import httplib
 import json
 import urllib
@@ -13,6 +8,11 @@ import urllib
 class Client:
  
   httpClient = None
+  SERVER="/servers"
+  STATUS="/status"
+  TOGGLE="/toggle"
+  MODE="/mode"
+  MODES=['auto','global','manual','bypasschian']
   
   def __init__(self):
     self.httpClient = httplib.HTTPConnection('localhost', 9528, timeout=30)
@@ -38,24 +38,24 @@ class Client:
     return str.split(':');
 
   def _getServers(self):
-    res = self._get(URL_SERVER)
+    res = self._get(self.SERVER)
     if res and res.status == 200 and res.reason == "OK":
       return json.loads(res.read())
 
   def _getStatus(self):
-    res = self._get(URL_STATUS)
+    res = self._get(self.STATUS)
     if res and res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['enable']
 
   def _getMode(self):
-    res = self._get(URL_MODE)
+    res = self._get(self.MODE)
     if res and res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['mode']
 
   def _setStatus(self):
-    res = self._post(URL_TOGGLE, {})
+    res = self._post(self.TOGGLE, {})
     if res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['Status'] == 1
@@ -63,7 +63,7 @@ class Client:
 
   def _setServer(self, id):
     parma = {'uuid': id}
-    res = self._post(URL_SERVER, parma)
+    res = self._post(self.SERVER, parma)
     if res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['Status'] == 1
@@ -71,7 +71,7 @@ class Client:
 
   def _setMode(self, mode):
     parma = {'vaule': mode}
-    res = self._post(URL_MODE, parma)
+    res = self._post(self.MODE, parma)
     if res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['Status'] == 1
