@@ -48,35 +48,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>68</integer>
-				<key>script</key>
-				<string>import sys
-from client import Client
-
-ss = Client()
-query = sys.argv[1]
-
-ss.action(query)</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>3</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>03A64B3B-833B-4C81-81C6-8BE345D3BEAC</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -117,7 +88,7 @@ ss.action(query)</string>
 				<key>runningsubtext</key>
 				<string>Loding</string>
 				<key>script</key>
-				<string>from client import Client
+				<string>from SSR import Client
 
 ss = Client()
 
@@ -140,6 +111,35 @@ ss.getList()
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>E4C22947-8474-420B-B17F-013B95F81522</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import sys
+from SSR import Client
+
+ss = Client()
+query = sys.argv[1]
+
+ss.action(query)</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>03A64B3B-833B-4C81-81C6-8BE345D3BEAC</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
