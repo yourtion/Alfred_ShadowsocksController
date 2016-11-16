@@ -99,22 +99,28 @@ class Client:
     enableStr = "True" if enable else "False"
     enableOptStr = "Disable" if enable else "Enable"
     mode = self._getMode()
-    print('<?xml version="1.0"?>')
-    print('<items>')
-    print("  <item uid=\"octal\" valid=\"yes\" arg=\"enable:"+enableOptStr+"\">")
-    print("    <title>Enable: "+enableStr+"</title>")
-    print("    <subtitle>Select to "+ enableOptStr +"</subtitle>")
-    print('    <icon>icon.png</icon>')
-    print('  </item>')
-    print("  <item uid=\"octal\" valid=\"yes\" arg=\"mode:"+mode+"\">")
-    print("    <title>Mode:"+mode+"</title>")
-    print('    <icon>icon.png</icon>')
-    print('  </item>')
+    items = []
+    enableItem = {
+        "title":"Enable: " + enableStr,
+        "subtitle": "Select to "+ enableOptStr,
+        "arg": "enable:"+enableOptStr,
+        "icon": "icon.png"
+    }
+    items.append(enableItem)
+    modeItem = {
+        "title": "Mode: "+mode,
+        "arg": "mode:"+mode,
+        "icon": "icon.png"
+    }
+    items.append(modeItem)
     for item in list:
-      print("  <item uid=\"octal\" valid=\"yes\" arg=\""+ "server:" +item['id']+":"+item['note']+"\">")
-      print("    <title>"+item['note']+"</title>")
-      print('    <icon>icon.png</icon>')
-      print('  </item>')
-    print('</items>')
+      serverItem = {
+        "title": "Server:" + item['note'],
+        "arg": "server:" +item['id']+":"+item['note'],
+        "icon": "icon.png"
+      }
+      items.append(serverItem)
+    result = {"items": items}
+    print(json.dumps(result))
     
 

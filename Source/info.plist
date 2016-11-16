@@ -70,7 +70,7 @@
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<false/>
+				<true/>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -101,7 +101,7 @@ ss.getList()
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string></string>
+				<string>{query}</string>
 				<key>type</key>
 				<integer>3</integer>
 				<key>withspace</key>
