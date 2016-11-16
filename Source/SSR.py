@@ -8,10 +8,10 @@ import urllib
 class Client:
  
   httpClient = None
-  SERVER="/servers"
-  STATUS="/status"
-  TOGGLE="/toggle"
-  MODE="/mode"
+  SERVER='/servers'
+  STATUS='/status'
+  TOGGLE='/toggle'
+  MODE='/mode'
   MODES=['auto','global','manual','bypasschian']
   
   def __init__(self):
@@ -27,8 +27,8 @@ class Client:
   def _post(self, url, parma):
     try:
       params = urllib.urlencode(parma)
-      headers = {"Content-type": "application/x-www-form-urlencoded"
-                     , "Accept": "text/plain"}
+      headers = {'Content-type': 'application/x-www-form-urlencoded'
+                     , 'Accept': 'text/plain'}
       self.httpClient.request('POST', url, params, headers)
       return self.httpClient.getresponse()
     except Exception, e:
@@ -39,24 +39,24 @@ class Client:
 
   def _getServers(self):
     res = self._get(self.SERVER)
-    if res and res.status == 200 and res.reason == "OK":
+    if res and res.status == 200 and res.reason == 'OK':
       return json.loads(res.read())
 
   def _getStatus(self):
     res = self._get(self.STATUS)
-    if res and res.status == 200 and res.reason == "OK":
+    if res and res.status == 200 and res.reason == 'OK':
       data = json.loads(res.read())
       return data['enable']
 
   def _getMode(self):
     res = self._get(self.MODE)
-    if res and res.status == 200 and res.reason == "OK":
+    if res and res.status == 200 and res.reason == 'OK':
       data = json.loads(res.read())
       return data['mode']
 
   def _setStatus(self):
     res = self._post(self.TOGGLE, {})
-    if res.status == 200 and res.reason == "OK":
+    if res.status == 200 and res.reason == 'OK':
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -64,7 +64,7 @@ class Client:
   def _setServer(self, id):
     parma = {'uuid': id}
     res = self._post(self.SERVER, parma)
-    if res.status == 200 and res.reason == "OK":
+    if res.status == 200 and res.reason == 'OK':
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -72,7 +72,7 @@ class Client:
   def _setMode(self, mode):
     parma = {'vaule': mode}
     res = self._post(self.MODE, parma)
-    if res.status == 200 and res.reason == "OK":
+    if res.status == 200 and res.reason == 'OK':
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -83,44 +83,52 @@ class Client:
     value = args[1]
     if(command == 'enable'):
       if(self._setStatus()):
-        print("Set ShadowSock " + value + ' Succeed!')
+        print('Set ShadowSock ' + value + ' Succeed!')
     # if(command == 'server'):
     #   if(self._setServer(value)):
-    #     print("Set Server " + args[2])
+    #     print('Set Server ' + args[2])
     if(command == 'mode'):
       if(self._setMode(value)):
-        print("Set Server Mode: " + value + ' Succeed!')
+        print('Set Server Mode: ' + value + ' Succeed!')
     return ''
 
 
   def getList(self):
     list = self._getServers()
     enable = self._getStatus()
-    enableStr = "True" if enable else "False"
-    enableOptStr = "Disable" if enable else "Enable"
+    enableStr = 'True' if enable else 'False'
+    enableOptStr = 'Disable' if enable else 'Enable'
     mode = self._getMode()
     items = []
     enableItem = {
-        "title":"Enable: " + enableStr,
-        "subtitle": "Select to "+ enableOptStr,
-        "arg": "enable:"+enableOptStr,
-        "icon": "icon.png"
+      'title':'Enable: ' + enableStr,
+      'subtitle': 'Select to '+ enableOptStr,
+      'arg': 'enable:'+enableOptStr,
+      'icon': {'path': 'icon.png'}
     }
+    if not enable:
+      enableItem['icon']['path'] = 'iconb.png'
     items.append(enableItem)
-    modeItem = {
-        "title": "Mode: "+mode,
-        "arg": "mode:"+mode,
-        "icon": "icon.png"
-    }
-    items.append(modeItem)
+    for m in self.MODES:
+      modeItem = {
+        'title': 'Mode: '+m,
+        'arg': 'mode:'+m,
+        'icon': {'path': 'iconb.png'}
+      }
+      if m == mode:
+        modeItem['icon']['path'] = 'icon.png'
+        modeItem['subtitle'] = 'Current Mode'
+      else:
+        modeItem['subtitle'] = 'Switch to' + m
+      items.append(modeItem)
+
     for item in list:
       serverItem = {
-        "title": "Server:" + item['note'],
-        "arg": "server:" +item['id']+":"+item['note'],
-        "icon": "icon.png"
+        'title': 'Server: ' + item['note'],
+        'arg': 'server:' +item['id']+':'+item['note'],
       }
       items.append(serverItem)
-    result = {"items": items}
+    result = {'items': items}
     print(json.dumps(result))
     
 
