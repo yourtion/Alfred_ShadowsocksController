@@ -17,33 +17,40 @@ class Client:
   def __init__(self):
     self.httpClient = httplib.HTTPConnection('localhost', 9528, timeout=30)
 
+  def _get(self, url):
+    try:
+      self.httpClient.request('GET', url)
+      return self.httpClient.getresponse()
+    except Exception, e:
+      return False
+
   def _post(self, url, parma):
-    params = urllib.urlencode(parma)
-    headers = {"Content-type": "application/x-www-form-urlencoded"
-                   , "Accept": "text/plain"}
-    self.httpClient.request('POST', url, params, headers)
-    return self.httpClient.getresponse()
+    try:
+      params = urllib.urlencode(parma)
+      headers = {"Content-type": "application/x-www-form-urlencoded"
+                     , "Accept": "text/plain"}
+      self.httpClient.request('POST', url, params, headers)
+      return self.httpClient.getresponse()
+    except Exception, e:
+      return False
 
   def _parseArgs(self, str):
     return str.split(':');
 
   def _getServers(self):
-    self.httpClient.request('GET', URL_SERVER)
-    res = self.httpClient.getresponse()
-    if res.status == 200 and res.reason == "OK":
+    res = self._get(URL_SERVER)
+    if res and res.status == 200 and res.reason == "OK":
       return json.loads(res.read())
 
   def _getStatus(self):
-    self.httpClient.request('GET', URL_STATUS)
-    res = self.httpClient.getresponse()
-    if res.status == 200 and res.reason == "OK":
+    res = self._get(URL_STATUS)
+    if res and res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['enable']
 
   def _getMode(self):
-    self.httpClient.request('GET', URL_MODE)
-    res = self.httpClient.getresponse()
-    if res.status == 200 and res.reason == "OK":
+    res = self._get(URL_MODE)
+    if res and res.status == 200 and res.reason == "OK":
       data = json.loads(res.read())
       return data['mode']
 
@@ -77,9 +84,9 @@ class Client:
     if(command == 'enable'):
       if(self._setStatus()):
         print("Set ShadowSock " + value + ' Succeed!')
-    if(command == 'server'):
-      if(self._setServer(value)):
-        print("Set Server " + args[2])
+    # if(command == 'server'):
+    #   if(self._setServer(value)):
+    #     print("Set Server " + args[2])
     if(command == 'mode'):
       if(self._setMode(value)):
         print("Set Server Mode: " + value + ' Succeed!')
@@ -87,30 +94,27 @@ class Client:
 
 
   def getList(self):
-    try:
-      list = self._getServers()
-      enable = self._getStatus()
-      enableStr = "True" if enable else "False"
-      enableOptStr = "Disable" if enable else "Enable"
-      mode = self._getMode()
-      print('<?xml version="1.0"?>')
-      print('<items>')
-      print("  <item uid=\"octal\" valid=\"yes\" arg=\"enable:"+enableOptStr+"\">")
-      print("    <title>Enable: "+enableStr+"</title>")
-      print("    <subtitle>Select to "+ enableOptStr +"</subtitle>")
+    list = self._getServers()
+    enable = self._getStatus()
+    enableStr = "True" if enable else "False"
+    enableOptStr = "Disable" if enable else "Enable"
+    mode = self._getMode()
+    print('<?xml version="1.0"?>')
+    print('<items>')
+    print("  <item uid=\"octal\" valid=\"yes\" arg=\"enable:"+enableOptStr+"\">")
+    print("    <title>Enable: "+enableStr+"</title>")
+    print("    <subtitle>Select to "+ enableOptStr +"</subtitle>")
+    print('    <icon>icon.png</icon>')
+    print('  </item>')
+    print("  <item uid=\"octal\" valid=\"yes\" arg=\"mode:"+mode+"\">")
+    print("    <title>Mode:"+mode+"</title>")
+    print('    <icon>icon.png</icon>')
+    print('  </item>')
+    for item in list:
+      print("  <item uid=\"octal\" valid=\"yes\" arg=\""+ "server:" +item['id']+":"+item['note']+"\">")
+      print("    <title>"+item['note']+"</title>")
       print('    <icon>icon.png</icon>')
       print('  </item>')
-      print("  <item uid=\"octal\" valid=\"yes\" arg=\"mode:"+mode+"\">")
-      print("    <title>Mode:"+mode+"</title>")
-      print('    <icon>icon.png</icon>')
-      print('  </item>')
-      for item in list:
-        print("  <item uid=\"octal\" valid=\"yes\" arg=\""+ "server:" +item['id']+":"+item['note']+"\">")
-        print("    <title>"+item['note']+"</title>")
-        print('    <icon>icon.png</icon>')
-        print('  </item>')
-      print('</items>')
-    except Exception, e:
-      print e
+    print('</items>')
     
 
