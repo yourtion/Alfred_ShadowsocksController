@@ -37,7 +37,7 @@ class Client:
       return False
 
   def _parseArgs(self, str):
-    return str.split(':');
+    return str.split(':', 2);
 
   def _getServers(self):
     res = self._get(self.SERVER)
@@ -71,11 +71,11 @@ class Client:
     res = self._post(self.SERVER, parma)
     if res:
       data = json.loads(res.read())
-      return data['Status'] == 1
+      return data['status'] == 1
     return False
 
   def _setMode(self, mode):
-    parma = {'vaule': mode}
+    parma = {'value': mode}
     res = self._post(self.MODE, parma)
     if res:
       data = json.loads(res.read())
@@ -89,9 +89,9 @@ class Client:
     if(command == 'enable'):
       if(self._setStatus()):
         print('Set ShadowSock ' + value + ' Succeed!')
-    # if(command == 'server'):
-    #   if(self._setServer(value)):
-    #     print('Set Server ' + args[2])
+    if(command == 'server'):
+      if(self._setServer(value)):
+        print('Set Server ' + args[2])
     if(command == 'mode'):
       if(self._setMode(value)):
         print('Set Server Mode: ' + value + ' Succeed!')
@@ -137,4 +137,3 @@ class Client:
     result = {'items': items}
     print(json.dumps(result))
     
-
