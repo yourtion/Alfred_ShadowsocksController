@@ -20,7 +20,8 @@ class Client:
   def _get(self, url):
     try:
       self.httpClient.request('GET', url)
-      return self.httpClient.getresponse()
+      res = self.httpClient.getresponse()
+      return res if res.status == 200 and res.reason == 'OK' else False
     except Exception, e:
       return False
 
@@ -30,7 +31,8 @@ class Client:
       headers = {'Content-type': 'application/x-www-form-urlencoded'
                      , 'Accept': 'text/plain'}
       self.httpClient.request('POST', url, params, headers)
-      return self.httpClient.getresponse()
+      res = self.httpClient.getresponse()
+      return res if res.status == 200 and res.reason == 'OK' else False
     except Exception, e:
       return False
 
@@ -39,24 +41,27 @@ class Client:
 
   def _getServers(self):
     res = self._get(self.SERVER)
-    if res and res.status == 200 and res.reason == 'OK':
+    if res:
       return json.loads(res.read())
+    return []
 
   def _getStatus(self):
     res = self._get(self.STATUS)
-    if res and res.status == 200 and res.reason == 'OK':
+    if res:
       data = json.loads(res.read())
       return data['enable']
+    return False
 
   def _getMode(self):
     res = self._get(self.MODE)
-    if res and res.status == 200 and res.reason == 'OK':
+    if res:
       data = json.loads(res.read())
       return data['mode']
+    return 'unknow'
 
   def _setStatus(self):
     res = self._post(self.TOGGLE, {})
-    if res.status == 200 and res.reason == 'OK':
+    if res:
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -64,7 +69,7 @@ class Client:
   def _setServer(self, id):
     parma = {'uuid': id}
     res = self._post(self.SERVER, parma)
-    if res.status == 200 and res.reason == 'OK':
+    if res:
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -72,7 +77,7 @@ class Client:
   def _setMode(self, mode):
     parma = {'vaule': mode}
     res = self._post(self.MODE, parma)
-    if res.status == 200 and res.reason == 'OK':
+    if res:
       data = json.loads(res.read())
       return data['Status'] == 1
     return False
@@ -109,6 +114,7 @@ class Client:
     if not enable:
       enableItem['icon']['path'] = 'iconb.png'
     items.append(enableItem)
+
     for m in self.MODES:
       modeItem = {
         'title': 'Mode: '+m,
@@ -119,7 +125,7 @@ class Client:
         modeItem['icon']['path'] = 'icon.png'
         modeItem['subtitle'] = 'Current Mode'
       else:
-        modeItem['subtitle'] = 'Switch to' + m
+        modeItem['subtitle'] = 'Switch to ' + m
       items.append(modeItem)
 
     for item in list:
