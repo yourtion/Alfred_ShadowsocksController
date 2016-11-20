@@ -12,7 +12,7 @@ class Client:
   STATUS='/status'
   TOGGLE='/toggle'
   MODE='/mode'
-  MODES=['auto','global','manual','bypasschian']
+  MODES=['auto','global','manual','bypasschina']
   
   def __init__(self):
     self.httpClient = httplib.HTTPConnection('localhost', 9528, timeout=30)
