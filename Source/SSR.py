@@ -105,35 +105,43 @@ class Client:
     enableOptStr = 'Disable' if enable else 'Enable'
     mode = self._getMode()
     items = []
-    enableItem = {
-      'title':'Enable: ' + enableStr,
-      'subtitle': 'Select to '+ enableOptStr,
-      'arg': 'enable:'+enableOptStr,
-      'icon': {'path': 'icon.png'}
-    }
-    if not enable:
-      enableItem['icon']['path'] = 'iconb.png'
-    items.append(enableItem)
+    if list and mode:
+      enableItem = {
+        'title':'Enable: ' + enableStr,
+        'subtitle': 'Select to '+ enableOptStr,
+        'arg': 'enable:'+enableOptStr,
+        'icon': {'path': 'icon.png'}
+      }
+      if not enable:
+        enableItem['icon']['path'] = 'iconb.png'
+      items.append(enableItem)
 
-    for m in self.MODES:
-      modeItem = {
-        'title': 'Mode: '+m,
-        'arg': 'mode:'+m,
+      for m in self.MODES:
+        modeItem = {
+          'title': 'Mode: '+m,
+          'arg': 'mode:'+m,
+          'icon': {'path': 'iconb.png'}
+        }
+        if m == mode:
+          modeItem['icon']['path'] = 'icon.png'
+          modeItem['subtitle'] = 'Current Mode'
+        else:
+          modeItem['subtitle'] = 'Switch to ' + m
+        items.append(modeItem)
+
+      for item in list:
+        serverItem = {
+          'title': 'Server: ' + item['note'],
+          'arg': 'server:' +item['id']+':'+item['note'],
+        }
+        items.append(serverItem)
+    else:
+      notRuning = {
+        'title':'ShadowSocks is not runing',
+        'subtitle': 'Please start ShadowSocks or update to new version.',
         'icon': {'path': 'iconb.png'}
       }
-      if m == mode:
-        modeItem['icon']['path'] = 'icon.png'
-        modeItem['subtitle'] = 'Current Mode'
-      else:
-        modeItem['subtitle'] = 'Switch to ' + m
-      items.append(modeItem)
-
-    for item in list:
-      serverItem = {
-        'title': 'Server: ' + item['note'],
-        'arg': 'server:' +item['id']+':'+item['note'],
-      }
-      items.append(serverItem)
+      items.append(notRuning)
     result = {'items': items}
     print(json.dumps(result))
     
