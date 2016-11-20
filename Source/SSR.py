@@ -118,7 +118,7 @@ class Client:
 
       for m in self.MODES:
         modeItem = {
-          'title': 'Mode: '+m,
+          'title': 'Mode: '+m.title(),
           'arg': 'mode:'+m,
           'icon': {'path': 'iconb.png'}
         }
